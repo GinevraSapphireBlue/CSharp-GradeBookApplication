@@ -13,15 +13,15 @@ namespace GradeBook.GradeBooks
 
         public override char GetLetterGrade(double averageGrade)
         {
-            if (Students.Count < 5)
+            if (!VerifySufficientNumberOfStudents())
             {
                 throw new InvalidOperationException();
             }
 
             var countBetterStudents = 0;
-            foreach(var student in Students)
+            foreach (var student in Students)
             {
-                if(student.AverageGrade > averageGrade)
+                if (student.AverageGrade > averageGrade)
                 {
                     countBetterStudents++;
                 }
@@ -29,7 +29,7 @@ namespace GradeBook.GradeBooks
 
             var betterStudentsPercentage = (double)countBetterStudents / Students.Count * 100;
 
-            switch(betterStudentsPercentage)
+            switch (betterStudentsPercentage)
             {
                 case var _ when betterStudentsPercentage < 20.0:
                     return 'A';
@@ -43,5 +43,38 @@ namespace GradeBook.GradeBooks
                     return 'F';
             }
         }
+
+        private Boolean VerifySufficientNumberOfStudents()
+        {
+            return Students.Count >= 5;
+        }
+
+        public override void CalculateStatistics()
+        {
+            if(VerifySufficientNumberOfStudents())
+            {
+                base.CalculateStatistics();
+            }
+            else
+            {
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
+                return;
+            }
+        }
+
+        public override void CalculateStudentStatistics(string name)
+        {
+            if (VerifySufficientNumberOfStudents())
+            {
+                base.CalculateStudentStatistics(name);
+            }
+            else
+            {
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
+                return;
+            }
+        }
+
+
     }
 }
